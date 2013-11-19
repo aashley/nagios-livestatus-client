@@ -20,6 +20,6 @@
         "phpunit/phpunit": "@stable"
     },
     "autoload": {
-        "psr-0": { "Nagios/Livestatus": "lib" }
+        "psr-0": { "Nagios\\Livestatus": "lib" }
     }
 }
