@@ -1,7 +1,7 @@
 {
     "name": "aashley/nagios-livestatus-client",
     "description": "An OO client to talk to MK Livestatus",
-    "homepage": "https://github.com/aashley/mk-livestatus-client",
+    "homepage": "https://github.com/aashley/nagios-livestatus-client",
     "type": "library",
     "license": "MIT",
     "authors": [
