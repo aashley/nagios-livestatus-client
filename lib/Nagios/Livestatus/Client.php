@@ -18,6 +18,7 @@ class Client
     protected $table = null;
     protected $columns = null;
     protected $filters = null;
+    protected $stats = null;
 
     public function __construct(array $conf)
     {
@@ -83,6 +84,12 @@ class Client
         return $this;
     }
 
+    public function stat($stat)
+    {
+        $this->stats[] = $stat;
+        return $this;
+    }
+
     public function execute()
     {
         $this->openSocket();
@@ -132,6 +139,10 @@ class Client
 
         foreach ($this->filters as $filter) {
             $request .= "Filter: " . $filter . "\n";
+        }
+
+        foreach ($this->stats as $stat) {
+            $request .= "Stats: " . $stat . "\n";
         }
 
         $request .= "OutputFormat: json\n"
