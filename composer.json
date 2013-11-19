@@ -2,7 +2,7 @@
     "name": "aashley/nagios-livestatus-client",
     "description": "An OO client to talk to MK Livestatus",
     "homepage": "https://github.com/aashley/mk-livestatus-client",
-    "type": "library"
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
@@ -13,11 +13,12 @@
     ],
     "require": {
         "php": ">=5.3.1",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-sockets": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "@stable"
-    }
+    },
     "autoload": {
         "psr-0": { "Nagios/Livestatus": "lib" }
     }
