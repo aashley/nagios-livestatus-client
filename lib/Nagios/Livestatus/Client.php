@@ -16,9 +16,9 @@ class Client
     protected $socket = null;
 
     protected $table = null;
-    protected $columns = null;
-    protected $filters = null;
-    protected $stats = null;
+    protected $columns = array();
+    protected $filters = array();
+    protected $stats = array();
 
     public function __construct(array $conf)
     {
