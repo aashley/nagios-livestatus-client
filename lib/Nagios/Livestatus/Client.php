@@ -124,6 +124,15 @@ class Client
         return $response;
     }
 
+    public function command(array $command)
+    {
+        $this->openSocket();
+
+        $fullcommand = sprintf("COMMAND [%lu] %s\n", time(), implode(';', $command));
+        socket_write($this->socket, $fullcommand);
+        $this->closeSocket();
+    }
+
     public function reset()
     {
         $this->closeSocket();
