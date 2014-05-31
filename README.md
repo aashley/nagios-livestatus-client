@@ -37,6 +37,14 @@ $response = (new Client($options))
 foreach ($response as $host) {
     print $host[0] . ": " . $host[1];
 }
+
+$client = new Client($options);
+$client->command(
+	array(
+		'ACKNOWLEDGE_SVC_PROBLEM',
+		'example.com',
+		'some service', 2, 0, 1,
+		'username', 'Example comment'));
 ```
 
 Installation
