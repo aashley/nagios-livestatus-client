@@ -39,7 +39,7 @@ class Client
             if (strlen($this->socketPath) == 0) {
                 throw new InvalidArgumentException("The option socketPath must be supplied for socketType 'unix'");
             }
-            if (file_exists($this->socketPath) && is_readable($this->socketPath) && is_writable($this->socketPath)) {
+            if (!file_exists($this->socketPath) || !is_readable($this->socketPath) || !is_writable($this->socketPath)) {
                 throw new InvalidArgumentException("The supplied socketPath '{$this->socketPath}' is not accessible to this script.");
             }
             break;
