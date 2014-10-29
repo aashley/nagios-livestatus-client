@@ -28,7 +28,9 @@ $options = array(
     'socketPort' => '6557',
 );
 
-$response = (new Client($options))
+$client = new Client($options);
+
+$response = $client
     ->get('hosts')
     ->column('host_name')
     ->column('state')
@@ -38,7 +40,6 @@ foreach ($response as $host) {
     print $host[0] . ": " . $host[1] . "\n";
 }
 
-$client = new Client($options);
 $client->command(
 	array(
 		'ACKNOWLEDGE_SVC_PROBLEM',
