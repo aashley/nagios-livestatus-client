@@ -4,7 +4,7 @@ Nagios MK Livestatus Client
 This package implements a PHP OO client for talking to the MK Livestatus
 Nagios Event Broker.
 
-This implementation is based on Lars Michelsen's 
+This implementation is based on Lars Michelsen's
 [LivestatusSlave](http://nagios.larsmichelsen.com/livestatusslave/).
 
 Requirements
@@ -35,7 +35,7 @@ $response = (new Client($options))
     ->execute();
 
 foreach ($response as $host) {
-    print $host[0] . ": " . $host[1];
+    print $host[0] . ": " . $host[1] . "\n";
 }
 
 $client = new Client($options);
