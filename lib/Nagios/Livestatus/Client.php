@@ -12,6 +12,7 @@ class Client
     protected $socketPath = '/var/run/nagios/rw/live';
     protected $socketAddress = '';
     protected $socketPort = '';
+    protected $socketTimeout = array();
 
     protected $socket = null;
 
@@ -192,6 +193,11 @@ class Client
 
         if ($this->socketType === 'tcp') {
             socket_set_option($this->socket, SOL_TCP, TCP_NODELAY, 1);
+        }
+
+        if ($this->socketTimeout) {
+            socket_set_option($this->socket, SOCK_STREAM, SO_RCVTIMEO, $this->socketTimeout);
+            socket_set_option($this->socket, SOCK_STREAM, SO_SNDTIMEO, $this->socketTimeout);
         }
     }
 
