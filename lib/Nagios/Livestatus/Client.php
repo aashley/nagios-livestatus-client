@@ -91,11 +91,19 @@ class Client
         return $this;
     }
 
-    public function execute()
+    public function execute($query = null)
     {
         $this->openSocket();
 
-        $query = $this->buildRequest();
+        // Check if query was supplied or needs to be built
+        if (is_null($query)) {
+            $query = $this->buildRequest();
+        }
+
+        // Add necessary data to query
+        $query .= "OutputFormat: json\n";
+        $query .= "ResponseHeader: fixed16\n";
+        $query .= "\n";
 
         // Send the query to MK Livestatus
         socket_write($this->socket, $query);
@@ -154,10 +162,6 @@ class Client
         foreach ($this->stats as $stat) {
             $request .= "Stats: " . $stat . "\n";
         }
-
-        $request .= "OutputFormat: json\n"
-            ."ResponseHeader: fixed16\n"
-            ."\n";
 
         return $request;
     }
