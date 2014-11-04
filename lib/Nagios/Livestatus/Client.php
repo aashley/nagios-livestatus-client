@@ -210,6 +210,7 @@ class Client
         $this->table = 'hosts';
         $this->columns = array();
         $this->filters = array();
+        $this->stats = array();
     }
 
     protected function readSocket($length)
