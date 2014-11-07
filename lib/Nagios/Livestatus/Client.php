@@ -19,6 +19,7 @@ class Client
     protected $table = null;
     protected $columns = array();
     protected $filters = array();
+    protected $parameters = array();
     protected $stats = array();
 
     public function __construct(array $conf)
@@ -82,6 +83,12 @@ class Client
     public function filter($filter)
     {
         $this->filters[] = $filter;
+        return $this;
+    }
+
+    public function parameter($parameter)
+    {
+        $this->parameters[] = $parameter;
         return $this;
     }
 
@@ -159,6 +166,10 @@ class Client
             $request .= "Filter: " . $filter . "\n";
         }
 
+        foreach ($this->parameters as $parameter) {
+            $request .= $parameter . "\n";
+        }
+
         foreach ($this->stats as $stat) {
             $request .= "Stats: " . $stat . "\n";
         }
@@ -214,6 +225,7 @@ class Client
         $this->table = 'hosts';
         $this->columns = array();
         $this->filters = array();
+        $this->parameters = array();
         $this->stats = array();
     }
 
