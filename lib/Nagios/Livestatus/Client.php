@@ -179,9 +179,7 @@ class Client
             return $this;
         }
 
-        $parameter = $this->checkEnding($parameter);
-
-        $this->query .= $parameter;
+        $this->query .= $this->checkEnding($parameter);
         return $this;
     }
 
