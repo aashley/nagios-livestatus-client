@@ -162,6 +162,16 @@ class Client
         $this->query .= "Or: " . $or. "\n";
         return $this;
     }
+    
+    public function and($and)
+    {
+        if (!is_int($and)) {
+            throw new InvalidArgumentException("An integer must be supplied.");
+        }
+
+        $this->query .= "And: " . $and. "\n";
+        return $this;
+    }
 
     public function negate()
     {
