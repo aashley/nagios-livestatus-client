@@ -72,7 +72,7 @@ class Client
             throw new InvalidArgumentException("A string must be supplied.");
         }
 
-        $this->table = $table;
+        $this->table = $this->sanitize($table);
         return $this;
     }
 
@@ -82,7 +82,20 @@ class Client
             throw new InvalidArgumentException("A string must be supplied.");
         }
 
-        $this->columns[] = $column;
+        $this->columns[] = $this->sanitize($column);
+        return $this;
+    }
+
+    public function columns(array $columns)
+    {
+        if (!is_array($columns)) {
+            throw new InvalidArgumentException("An array must be supplied.");
+        }
+
+        foreach ($columns as $column) {
+            $this->column($column);
+        }
+
         return $this;
     }
 
@@ -102,23 +115,13 @@ class Client
     }
 
 
-    public function columns(array $columns)
-    {
-        if (!is_array($columns)) {
-            throw new InvalidArgumentException("An array must be supplied.");
-        }
-
-        $this->columns = $columns;
-        return $this;
-    }
-
     public function filter($filter)
     {
         if (!is_string($filter)) {
             throw new InvalidArgumentException("A string must be supplied.");
         }
 
-        $this->query .= "Filter: " . $filter . "\n";
+        $this->query .= "Filter: " . $this->sanitize($filter) . "\n";
         return $this;
     }
 
@@ -133,7 +136,7 @@ class Client
             throw new InvalidArgumentException("A string must be supplied.");
         }
 
-        $this->query .= "Stats: " . $stats . "\n";
+        $this->query .= "Stats: " . $this->sanitize($stats) . "\n";
         return $this;
     }
 
@@ -159,7 +162,7 @@ class Client
             throw new InvalidArgumentException("An integer must be supplied.");
         }
 
-        $this->query .= "Or: " . $or. "\n";
+        $this->query .= "Or: " . $or . "\n";
         return $this;
     }
     
@@ -189,7 +192,7 @@ class Client
             return $this;
         }
 
-        $this->query .= $this->checkEnding($parameter);
+        $this->query .= trim($parameter, "\r\n\0") . "\n";
         return $this;
     }
 
@@ -199,7 +202,7 @@ class Client
             throw new InvalidArgumentException("A string must be supplied.");
         }
 
-        $this->outputFormat = $outputFormat;
+        $this->outputFormat = $this->sanitize($outputFormat);
         return $this;
     }
 
@@ -219,7 +222,7 @@ class Client
             throw new InvalidArgumentException("A string must be supplied.");
         }
 
-        $this->authUser = "AuthUser: " . $authUser . "\n";
+        $this->authUser = "AuthUser: " . $this->sanitize($authUser) . "\n";
         return $this;
     }
 
@@ -263,8 +266,10 @@ class Client
     {
         $this->openSocket();
 
-        $fullcommand = sprintf("COMMAND [%lu] %s\n", time(), implode(';', $command));
+        $fullcommand = sprintf("COMMAND [%lu] %s", time(), implode(';', $command));
+        $fullcommand = $this->sanitize($fullcommand) . "\n";
         socket_write($this->socket, $fullcommand);
+
         $this->closeSocket();
     }
 
@@ -277,7 +282,7 @@ class Client
     {
         // Check if request was supplied
         if (!is_null($request)) {
-            $request = $this->checkEnding($request);
+            $request = trim($request, "\r\n\0") . "\n";
         } else {
             $request = "GET " . $this->table . "\n";
 
@@ -312,7 +317,7 @@ class Client
     protected function openSocket()
     {
         if (!is_null($this->socket)) {
-            // Assume socket still good and continue
+            // Assume the socket is still good and continue
             return;
         }
 
@@ -389,12 +394,8 @@ class Client
         return $socketData;
     }
 
-    protected function checkEnding($string)
+    public static function sanitize($string)
     {
-        if ($string[strlen($string)-1] !== "\n") {
-            $string .= "\n";
-        }
-
-        return $string;
+        return str_replace(array("\r\n", "\r", "\n"), "", $string);
     }
 }
