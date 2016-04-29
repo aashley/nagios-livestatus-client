@@ -153,23 +153,23 @@ class Client
         return $this;
     }
 
-    public function lor($or)
+    public function lor($orLines)
     {
-        if (!is_int($or)) {
+        if (!is_int($orLines)) {
             throw new InvalidArgumentException("An integer must be supplied.");
         }
 
-        $this->query .= "Or: " . $or. "\n";
+        $this->query .= "Or: " . $orLines . "\n";
         return $this;
     }
-    
-    public function and($and)
+
+    public function and($andLines)
     {
-        if (!is_int($and)) {
+        if (!is_int($andLines)) {
             throw new InvalidArgumentException("An integer must be supplied.");
         }
 
-        $this->query .= "And: " . $and. "\n";
+        $this->query .= "And: " . $andLines . "\n";
         return $this;
     }
 
