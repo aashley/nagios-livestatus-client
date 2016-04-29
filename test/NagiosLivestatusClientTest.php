@@ -13,7 +13,7 @@ class NagiosLivestatusClientTest extends PHPUnit_Framework_TestCase
     {
         $options = array(
             'socketType' => 'tcp',
-            'socketAddress' => '10.253.14.22',
+            'socketAddress' => '10.248.14.22',
             'socketPort' => '6557'
         );
 
@@ -84,6 +84,17 @@ class NagiosLivestatusClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("accept_passive_checks", $response[0][0], "First column of header row not as expected");
     }
 
+    public function testGetHostsAssoc()
+    {
+        $response = $this->createTcpClient()
+            ->get('hosts')
+            ->executeAssoc();
+
+        $this->assertGreaterThanOrEqual(1, count($response), "No hosts where returned by the search");
+        $this->assertNotEquals("accept_passive_checks", $response[0][0], "Header row still in response");
+        $this->assertArrayHasKey("accept_passive_checks", $response[0], "Associative keys not set");
+    }
+
     public function testGetHostColumns()
     {
         $response = $this->createTcpClient()
@@ -94,6 +105,20 @@ class NagiosLivestatusClientTest extends PHPUnit_Framework_TestCase
 
         $this->assertGreaterThanOrEqual(2, count($response), "No hosts where returned by the search");
         $this->assertCount(2, $response[0], "Incorrect number of columns returned");
+    }
+
+    public function testGetHostColumnsAssoc()
+    {
+        $response = $this->createTcpClient()
+            ->get('hosts')
+            ->column('host_name')
+            ->column('host_alias')
+            ->executeAssoc();
+
+        $this->assertGreaterThanOrEqual(2, count($response), "No hosts where returned by the search");
+        $this->assertCount(4, $response[0], "Incorrect number of columns returned");
+        $this->assertArrayHasKey("host_name", $response[0], "host_name column not available");
+        $this->assertArrayHasKey("host_alias", $response[0], "host_alias column not available");
     }
 
     public function testGetHostFilter()

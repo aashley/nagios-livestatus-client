@@ -227,31 +227,31 @@ class Client
     {
         $this->openSocket();
 
-        $query = $this->buildRequest($query);
+        $response = $this->runQuery($query);
 
-        // Send the query to MK Livestatus
-        socket_write($this->socket, $query);
+        $this->closeSocket();
 
-        // Read 16 bytes to get the status code and body size
-        $header = $this->readSocket(16);
+        return $response;
+    }
 
-        $status = substr($header, 0, 3);
-        $length = intval(trim(substr($header, 4, 11)));
+    public function executeAssoc()
+    {
+        $this->openSocket();
 
-        $response = $this->readSocket($length);
+        $response = $this->runQuery();
 
-        // Check for errors. A 200 reponse means request was OK.
-        // Any other response is a failure.
-        if ($status != "200") {
-            throw new RuntimeException("Error response from Nagios MK Livestatus: " . $response);
+        if (count($this->columns) > 0) {
+            $headers = $this->columns;
+        } else {
+            $headers = array_shift($response);
         }
 
-        if ($this->outputFormat === "json") {
-            $response = json_decode(utf8_encode($response));
-        }
-
-        if (is_null($response)) {
-            throw new RuntimeException("The response was invalid.");
+        $cols = count($headers);
+        $rows = count($response);
+        for ($i = 0; $i < $rows; $i++) {
+            for ($j = 0; $j < $cols; $j++) {
+                $response[$i][$headers[$j]] = $response[$i][$j];
+            }
         }
 
         $this->closeSocket();
@@ -283,7 +283,9 @@ class Client
 
             if ($this->columns) {
                 $request .= "Columns: " . implode(" ", $this->columns) . "\n";
-                $request .= "ColumnHeaders: " . $this->headers . "\n";
+                if ($this->headers) {
+                    $request .= "ColumnHeaders: " . $this->headers . "\n";
+                }
             }
 
             if (!is_null($this->query)) {
@@ -396,5 +398,37 @@ class Client
         }
 
         return $string;
+    }
+
+    protected function runQuery($query = null)
+    {
+        $query = $this->buildRequest($query);
+
+        // Send the query to MK Livestatus
+        socket_write($this->socket, $query);
+
+        // Read 16 bytes to get the status code and body size
+        $header = $this->readSocket(16);
+
+        $status = substr($header, 0, 3);
+        $length = intval(trim(substr($header, 4, 11)));
+
+        $response = $this->readSocket($length);
+
+        // Check for errors. A 200 reponse means request was OK.
+        // Any other response is a failure.
+        if ($status != "200") {
+            throw new RuntimeException("Error response from Nagios MK Livestatus: " . $response);
+        }
+
+        if ($this->outputFormat === "json") {
+            $response = json_decode(utf8_encode($response));
+        }
+
+        if (is_null($response)) {
+            throw new RuntimeException("The response was invalid.");
+        }
+
+        return $response;
     }
 }
