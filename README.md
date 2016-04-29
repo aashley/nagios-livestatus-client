@@ -40,15 +40,29 @@ foreach ($response as $host) {
     print $host[0] . ": " . $host[1] . "\n";
 }
 
+$response = $client
+    ->get('hosts')
+    ->column('host_name')
+    ->column('state')
+    ->executeAssoc();
+
+foreach ($response as $host) {
+    print $host['host_name'] . ": " . $host['state'] . "\n";
+}
+
 $client->command(
 	array(
 		'ACKNOWLEDGE_SVC_PROBLEM',
 		'example.com',
 		'some service', 2, 0, 1,
-		'username', 'Example comment'));
+		'username', 'Example comment'
+    )
+);
 ```
 
 Installation
 ------------
 
 In composer add a dependancy on `aashley/nagios-livestatus-client`
+
+    composer require aashley/nagios-livestatus-client
