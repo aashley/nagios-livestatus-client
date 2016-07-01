@@ -155,6 +155,11 @@ class Client
 
     public function lor($orLines)
     {
+        return $this->logicalOr($orLines);
+    }
+
+    public function logicalOr($orLines)
+    {
         if (!is_int($orLines)) {
             throw new InvalidArgumentException("An integer must be supplied.");
         }
@@ -163,7 +168,7 @@ class Client
         return $this;
     }
 
-    public function and($andLines)
+    public function logicalAnd($andLines)
     {
         if (!is_int($andLines)) {
             throw new InvalidArgumentException("An integer must be supplied.");
